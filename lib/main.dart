@@ -43,6 +43,10 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();//этот вызов сообщает о необходимости перестроения
   }
+  void removeFavorite(WordPair pair){
+    favorites.remove(pair);
+    notifyListeners();//этот вызов сообщает о необходимости перестроения
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -65,6 +69,12 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = FavoritePage();
         break;
+      case 2:
+        page = CategoryPage();
+        break;
+      case 3:
+        page = NewsPage();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -86,6 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icon(Icons.favorite),
                       label: Text('Favorites'),
                     ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.category), 
+                      label: Text('Categories')),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.event_note), 
+                      label: Text('News'))
                   ],
                   selectedIndex: selectedIndex,
                   onDestinationSelected: (value) {
@@ -184,10 +200,13 @@ class BigCard extends StatelessWidget {
   }
 }
 
+
 class FavoritePage extends StatelessWidget{
+  
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+     var theme = Theme.of(context);
 
     if (appState.favorites.isEmpty){
       return Center(
@@ -204,11 +223,39 @@ class FavoritePage extends StatelessWidget{
         ),
         for (var pair in appState.favorites)
           ListTile(
-            leading: Icon(Icons.favorite),
+            leading:IconButton(
+              icon: Icon(Icons.delete),
+              color: theme.colorScheme.primary, 
+              onPressed: (){
+                appState.removeFavorite(pair);
+              },
+              ),
             title: Text(pair.asLowerCase),
-
           )
       ]
     );
   }
 }
+
+class NewsPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // var appState = context.watch<MyAppState>();
+    
+    return Center(
+        child: Text('No news yet.'),
+      );
+  }
+}
+
+class CategoryPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    // var appState = context.watch<MyAppState>();
+    
+    return Center(
+        child: Text('No categories yet.'),
+      );
+  }
+}
+       
